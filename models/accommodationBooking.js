@@ -8,7 +8,7 @@ const accommodationBookingSchema = new mongoose.Schema(
     },
     accommodationName: {
       type: String,
-      required: [true, "Accommodation  name required"],
+      required: [true, "Accommodation name required"],
     },
     location: {
       city: String,
@@ -25,12 +25,12 @@ const accommodationBookingSchema = new mongoose.Schema(
     checkInDate: {
       type: Date,
       message: "Check-in date must be today or later",
-      },
+    },
 
     checkOutDate: {
       type: Date,
       message: "Check-out date must be check-in date or after",
-      },
+    },
 
     tripId: {
       type: mongoose.Schema.Types.ObjectId,

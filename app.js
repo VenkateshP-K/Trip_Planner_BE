@@ -42,7 +42,7 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 app.get("/api", (req, res) => {
-  res.json({message: "Welcome to travel-planner-india app api enpoints!"});
+  res.json({message: "Welcome to Travel Planner app"});
 });
 
 app.use("/api/users", userRouter, tripRouter);

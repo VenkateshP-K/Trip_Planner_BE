@@ -46,6 +46,13 @@ tripRouter.get(
   tripController.getAllBookedAccommodations
 );
 
+//delete accommodation
+tripRouter.delete(
+  "/trips/accommodations/booking/:accId",
+  auth.isAuth,
+  tripController.deleteAccommodationById
+);
+
 tripRouter.get(
   "/travels/:travelId",
   auth.isAuth,

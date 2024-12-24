@@ -1,43 +1,45 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
-const User = require("../models/user");
 
 const auth = {
   isAuth: (req, res, next) => {
-    const token = req.cookies.token;
+    // Get token from Authorization header
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
 
     if (!token) {
-      return res.status(401).json({ message: "Unauthorized access" });
+      return res.status(401).json({ message: "Unauthorized access: No token provided" });
     }
 
     try {
       const decodedToken = jwt.verify(token, JWT_SECRET);
       req.userId = decodedToken.id;
-
-    
-
       next();
     } catch (err) {
       if (err.name === "JsonWebTokenError") {
-        res.status(401).json({ message: "Invalid token" });
+        return res.status(401).json({ message: "Invalid token" });
+      } else if (err.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Token expired" });
       } else {
-        res.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message });
       }
     }
   },
 
   isAuthAdmin: (req, res, next) => {
-    const token = req.cookies.token;
+    // Get token from Authorization header
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
 
     if (!token) {
-      return res.status(401).json({ message: "Unauthorized access" });
+      return res.status(401).json({ message: "Unauthorized access: No token provided" });
     }
+
     try {
       const decodedToken = jwt.verify(token, JWT_SECRET);
 
       if (decodedToken.id && decodedToken.userType === "admin") {
         req.userId = decodedToken.id;
-
         req.userType = decodedToken.userType;
         next();
       } else {
@@ -45,11 +47,11 @@ const auth = {
       }
     } catch (err) {
       if (err.name === "JsonWebTokenError") {
-        res.status(401).json({ message: "Invalid token" });
+        return res.status(401).json({ message: "Invalid token" });
       } else if (err.name === "TokenExpiredError") {
-        res.status(401).json({ message: "Token expired" });
+        return res.status(401).json({ message: "Token expired" });
       } else {
-        res.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message });
       }
     }
   },

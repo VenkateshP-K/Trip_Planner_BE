@@ -26,7 +26,7 @@ const corsOptions = {
   origin: ['http://localhost:5173', 'https://trip-planner-be.onrender.com'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With','access-control-allow-origin'],
   exposedHeaders: ['Authorization'],
 };
 

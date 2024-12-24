@@ -23,14 +23,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://trip-planner-be.onrender.com'],
+  origin: ['https://library-management-pk.netlify.app','http://localhost:5173', 'https://library-management-system-be.onrender.com'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With','access-control-allow-origin'],
-  exposedHeaders: ['Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.get("/api", (req, res) => {
   res.json({message: "Welcome to Travel Planner app"});
@@ -39,7 +39,5 @@ app.get("/api", (req, res) => {
 app.use("/api/users", userRouter, tripRouter);
 
 app.use("/api/admins", flightRouter, trainRouter, accommodationRouter);
-
-module.exports = app;
 
 module.exports = app;

@@ -4,55 +4,59 @@ const User = require("../models/user");
 
 const auth = {
   isAuth: (req, res, next) => {
-    const token = req.cookies.token;
+  const authHeader = req.headers.authorization;
 
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized access" });
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized access" });
+  }
+
+  const token = authHeader.split(" ")[1]; // Extract token from 'Bearer <token>'
+
+  try {
+    const decodedToken = jwt.verify(token, JWT_SECRET);
+    req.userId = decodedToken.id;
+
+    next();
+  } catch (err) {
+    if (err.name === "JsonWebTokenError") {
+      res.status(401).json({ message: "Invalid token" });
+    } else if (err.name === "TokenExpiredError") {
+      res.status(401).json({ message: "Token expired" });
+    } else {
+      res.status(500).json({ message: err.message });
     }
+  }
+},
 
-    try {
-      const decodedToken = jwt.verify(token, JWT_SECRET);
+isAuthAdmin: (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized access" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decodedToken = jwt.verify(token, JWT_SECRET);
+
+    if (decodedToken.id && decodedToken.userType === "admin") {
       req.userId = decodedToken.id;
-
-    
-
+      req.userType = decodedToken.userType;
       next();
-    } catch (err) {
-      if (err.name === "JsonWebTokenError") {
-        res.status(401).json({ message: "Invalid token" });
-      } else {
-        res.status(500).json({ message: err.message });
-      }
+    } else {
+      return res.status(403).json({ message: "Forbidden: Admins only" });
     }
-  },
-
-  isAuthAdmin: (req, res, next) => {
-    const token = req.cookies.token;
-
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized access" });
+  } catch (err) {
+    if (err.name === "JsonWebTokenError") {
+      res.status(401).json({ message: "Invalid token" });
+    } else if (err.name === "TokenExpiredError") {
+      res.status(401).json({ message: "Token expired" });
+    } else {
+      res.status(500).json({ message: err.message });
     }
-    try {
-      const decodedToken = jwt.verify(token, JWT_SECRET);
-
-      if (decodedToken.id && decodedToken.userType === "admin") {
-        req.userId = decodedToken.id;
-
-        req.userType = decodedToken.userType;
-        next();
-      } else {
-        return res.status(403).json({ message: "Forbidden: Admins only" });
-      }
-    } catch (err) {
-      if (err.name === "JsonWebTokenError") {
-        res.status(401).json({ message: "Invalid token" });
-      } else if (err.name === "TokenExpiredError") {
-        res.status(401).json({ message: "Token expired" });
-      } else {
-        res.status(500).json({ message: err.message });
-      }
-    }
-  },
-};
+  }
+},
+}
 
 module.exports = auth;

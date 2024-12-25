@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: ['https://library-management-pk.netlify.app','http://localhost:5173', 'https://library-management-system-be.onrender.com'],
+  origin: ['http://localhost:5173', 'https://trip-planner-be.onrender.com/api'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

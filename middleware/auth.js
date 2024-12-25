@@ -4,24 +4,22 @@ const User = require("../models/user");
 
 const auth = {
   isAuth: (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const token = req.cookies.token;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       return res.status(401).json({ message: "Unauthorized access" });
     }
-
-    const token = authHeader.split(" ")[1]; // Extract token from 'Bearer <token>'
 
     try {
       const decodedToken = jwt.verify(token, JWT_SECRET);
       req.userId = decodedToken.id;
 
+    
+
       next();
     } catch (err) {
       if (err.name === "JsonWebTokenError") {
         res.status(401).json({ message: "Invalid token" });
-      } else if (err.name === "TokenExpiredError") {
-        res.status(401).json({ message: "Token expired" });
       } else {
         res.status(500).json({ message: err.message });
       }
@@ -29,19 +27,17 @@ const auth = {
   },
 
   isAuthAdmin: (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const token = req.cookies.token;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       return res.status(401).json({ message: "Unauthorized access" });
     }
-
-    const token = authHeader.split(" ")[1];
-
     try {
       const decodedToken = jwt.verify(token, JWT_SECRET);
 
       if (decodedToken.id && decodedToken.userType === "admin") {
         req.userId = decodedToken.id;
+
         req.userType = decodedToken.userType;
         next();
       } else {
@@ -58,6 +54,5 @@ const auth = {
     }
   },
 };
-
 
 module.exports = auth;

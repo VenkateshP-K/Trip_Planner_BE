@@ -4,16 +4,16 @@ const User = require("../models/user");
 
 const auth = {
   isAuth: (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const token = req.cookies.token;
+
+    if (!token) {
+      console.log("Token missing from cookies.");
       return res.status(401).json({ message: "Unauthorized access" });
     }
 
-    const token = authHeader.split(' ')[1];
-    
     try {
       const decodedToken = jwt.verify(token, JWT_SECRET);
+      console.log("Decoded Token:", decodedToken); // Debug decoded token
       req.userId = decodedToken.id;
       next();
     } catch (err) {
@@ -29,13 +29,7 @@ const auth = {
   },
 
   isAuthAdmin: (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: "Unauthorized access" });
-    }
-
-    const token = authHeader.split(' ')[1];
+    const token = req.cookies.token;
 
     if (!token) {
       return res.status(401).json({ message: "Unauthorized access" });

@@ -60,12 +60,12 @@ const userController = {
         { expiresIn: "24h" }
       );
 
-      res.cookie('token', token, {
+      res.cookie("token", token, {
         httpOnly: true,
-        secure: true, // for HTTPS
-        sameSite: 'strict',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-      }).json({ user: userData });
+        secure: true,
+        sameSite: "none",
+        expires: new Date(Date.now() + 24 * 3600 * 1000),
+      });
 
       res.status(200).json({ message: "Logged successfully!", token });
     } catch (err) {

@@ -4,24 +4,27 @@ const User = require("../models/user");
 
 const auth = {
   isAuth: (req, res, next) => {
+    console.log("Cookies:", req.cookies); // Debug cookies
     const token = req.cookies.token;
 
     if (!token) {
+      console.log("Token missing from cookies.");
       return res.status(401).json({ message: "Unauthorized access" });
     }
 
     try {
       const decodedToken = jwt.verify(token, JWT_SECRET);
+      console.log("Decoded Token:", decodedToken); // Debug decoded token
       req.userId = decodedToken.id;
-
-    
-
       next();
     } catch (err) {
+      console.error("Token verification failed:", err);
       if (err.name === "JsonWebTokenError") {
-        res.status(401).json({ message: "Invalid token" });
+        return res.status(401).json({ message: "Invalid token" });
+      } else if (err.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Token expired" });
       } else {
-        res.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message });
       }
     }
   },

@@ -4,7 +4,9 @@ const User = require("../models/user");
 
 const auth = {
   isAuth: (req, res, next) => {
-    const token = req.cookies.token ||  req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization?.split(" ")[1] || req.cookies.token;
+    console.log("Token from header:", req.headers.authorization);
+    console.log("Token from cookie:", req.cookies.token);
 
     if (!token) {
       console.log("Token missing from cookies.");
@@ -29,8 +31,10 @@ const auth = {
   },
 
   isAuthAdmin: (req, res, next) => {
-    const token = req.cookies.token ||  req.headers.authorization?.split(' ')[1];
-
+    const token = req.headers.authorization?.split(" ")[1] || req.cookies.token;
+    console.log("Token from header:", req.headers.authorization);
+    console.log("Token from cookie:", req.cookies.token);
+    
     if (!token) {
       return res.status(401).json({ message: "Unauthorized access" });
     }

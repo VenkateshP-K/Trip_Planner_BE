@@ -23,7 +23,7 @@ tripRouter.put(
   "/trips/travels/booking/:tripId",
   auth.isAuth,
   tripController.bookTravel
-);
+); 
 
 // accommodation booking
 tripRouter.put(

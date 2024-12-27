@@ -8,7 +8,7 @@ console.log("Conecting to MongoDB...");
 mongoose
   .connect(config.MONGODB_URI)
   .then(() => {
-    const PORT = config.MONGODB_PORT || 5500;
+    const PORT = config.MONGODB_PORT;
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);

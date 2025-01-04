@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: ['https://trip-planner-be.onrender.com','https://travel-planner-pk03.netlify.app'],
+  origin: ['https://trip-planner-be.onrender.com','https://travel-planner-pk03.netlify.app','http://localhost:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

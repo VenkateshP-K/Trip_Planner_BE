@@ -62,7 +62,7 @@ const userController = {
 
       res.cookie("token", token, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "none",
         expires: new Date(Date.now() + 24 * 3600 * 1000),
       });

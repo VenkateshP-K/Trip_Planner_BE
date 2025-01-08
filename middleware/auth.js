@@ -10,7 +10,7 @@ const auth = {
         return res.status(401).json({ message: "Unauthorized" });
     }
     try {
-        const decodedToken = jwt.verify(token, config.JWT_SECRET);
+        const decodedToken = jwt.verify(token, JWT_SECRET);
         req.userId = decodedToken.userId;
         next();
     } catch (error) {

@@ -45,7 +45,7 @@ const tripController = {
       await newTrip.save();
 
       await User.findOneAndUpdate(
-        { _id: userId, isAccountActive: true },
+        { _id: userId },
         { $push: { trips: newTrip._id } }
       );
 

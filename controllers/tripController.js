@@ -388,8 +388,6 @@ const tripController = {
     }
   },
 
-  // get all booked accommodation for the trip
-
   getAllBookedAccommodations: async (req, res) => {
     try {
       const userId = req.userId;
@@ -439,7 +437,7 @@ const tripController = {
     }
   },
   // editAccommodation
-  editAccommmodationById: async (req, res) => {
+  editAccommodationById: async (req, res) => {
     try {
       const userId = req.userId;
 
@@ -468,6 +466,7 @@ const tripController = {
       });
     } catch (err) {}
   },
+
   // delete accommodation
   deleteAccommodationById: async (req, res) => {
     try {

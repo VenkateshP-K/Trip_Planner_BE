@@ -46,6 +46,13 @@ tripRouter.get(
   tripController.getAllBookedAccommodations
 );
 
+//update accommodation
+tripRouter.put(
+  "/trips/accommodations/edit/:accId",
+  auth.isAuth,
+  tripController.editAccommodationById
+);
+
 //delete accommodation
 tripRouter.delete(
   "/trips/accommodations/booking/:accId",

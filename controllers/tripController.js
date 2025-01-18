@@ -459,9 +459,6 @@ const tripController = {
           message: "Check-Out date must be the same or later than Check-In date.",
         });
       }
-      console.log("Request Params:", req.params);
-      console.log("Request Body:", req.body);
-      console.log("User ID:", req.userId);
 
       // Find and update the accommodation
       const updatedAccommodation = await Accommodation.findOneAndUpdate(

@@ -51,8 +51,8 @@ const tripController = {
 
       res.status(201).json({ message: "Trip added successfully!" });
     } catch (err) {
-       return res.status(400).json({ message: err.message });
-      }
+      return res.status(400).json({ message: err.message });
+    }
   },
   getTripById: async (req, res) => {
     try {
@@ -315,7 +315,7 @@ const tripController = {
       await Trip.findOneAndUpdate(
         { userId, _id: tripId },
         { $push: { travelBookings: newBooking._id } },
-        { new: true}
+        { new: true }
       );
 
       res.status(200).json(newBooking);
@@ -441,14 +441,14 @@ const tripController = {
     try {
       const userId = req.userId; // Ensure this is set correctly
       const accId = req.params.accId; // Accommodation ID
-  
+
       // Validate request body
       if (!req.body || Object.keys(req.body).length === 0) {
         return res.status(400).json({ message: "Request body is empty" });
       }
-  
+
       const { checkInDate, checkOutDate } = req.body;
-  
+
       // Validate dates
       const today = new Date().toISOString().slice(0, 10);
       if (checkInDate < today) {
@@ -459,18 +459,21 @@ const tripController = {
           message: "Check-Out date must be the same or later than Check-In date.",
         });
       }
-  
+      console.log("Request Params:", req.params);
+      console.log("Request Body:", req.body);
+      console.log("User ID:", req.userId);
+
       // Find and update the accommodation
       const updatedAccommodation = await Accommodation.findOneAndUpdate(
         { userId, _id: accId },
         { ...req.body },
         { new: true, runValidators: true }
       );
-  
+
       if (!updatedAccommodation) {
         return res.status(400).json({ message: "Accommodation not found" });
       }
-  
+
       res.status(200).json({
         message: "Accommodation information updated successfully",
         updatedAccommodation,
@@ -584,7 +587,7 @@ const tripController = {
         message: "Travel booking information updated successfully",
         updatedTravelBooking,
       });
-    } catch (err) {}
+    } catch (err) { }
   },
 
   deleteTravelBookingById: async (req, res) => {

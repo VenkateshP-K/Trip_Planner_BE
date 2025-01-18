@@ -788,6 +788,21 @@ const tripController = {
       res.status(500).json(err.message);
     }
   },
+
+  getFlightBtnStations: async (req, res) => {
+    try {
+      const from = req.params.from;
+      const to = req.params.to;
+
+      const response = await axios.get(
+        `https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsedates/1.0/INR/en-GB/${from}/${to}/2023-06-01`,
+      )
+      
+      res.status(200).json(response.data);
+    } catch (err) {
+      res.status(500).json(err.message);
+    }
+  },
 };
 
 module.exports = tripController;

@@ -439,33 +439,45 @@ const tripController = {
   // editAccommodation
   editAccommodationById: async (req, res) => {
     try {
-      const userId = req.userId;
-
-      const accId = req.params.accId;
-
+      const userId = req.userId; // Ensure this is set correctly
+      const accId = req.params.accId; // Accommodation ID
+  
+      // Validate request body
       if (!req.body || Object.keys(req.body).length === 0) {
         return res.status(400).json({ message: "Request body is empty" });
       }
-
+  
+      const { checkInDate, checkOutDate } = req.body;
+  
+      // Validate dates
+      const today = new Date().toISOString().slice(0, 10);
+      if (checkInDate < today) {
+        return res.status(400).json({ message: "Check-In date must be today or later." });
+      }
+      if (checkOutDate < checkInDate) {
+        return res.status(400).json({
+          message: "Check-Out date must be the same or later than Check-In date.",
+        });
+      }
+  
+      // Find and update the accommodation
       const updatedAccommodation = await Accommodation.findOneAndUpdate(
-        {
-          userId,
-          _id: accId,
-        },
+        { userId, _id: accId },
         { ...req.body },
         { new: true, runValidators: true }
       );
-
+  
       if (!updatedAccommodation) {
         return res.status(400).json({ message: "Accommodation not found" });
       }
-
+  
       res.status(200).json({
         message: "Accommodation information updated successfully",
         updatedAccommodation,
       });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      console.error("Error updating accommodation:", err.message);
+      res.status(500).json({ message: "Internal Server Error", error: err.message });
     }
   },
 

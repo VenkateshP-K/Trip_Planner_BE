@@ -464,7 +464,9 @@ const tripController = {
         message: "Accommodation information updated successfully",
         updatedAccommodation,
       });
-    } catch (err) {}
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   },
 
   // delete accommodation

@@ -19,7 +19,8 @@ const accommodationBookingSchema = new mongoose.Schema(
       type: String,
       required: [true, "Address required"],
     },
-    amenities: Array,
+    amenities: [String],
+
     rating: Number,
 
     checkInDate: {

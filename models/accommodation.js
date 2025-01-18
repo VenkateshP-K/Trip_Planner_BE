@@ -17,6 +17,7 @@ const accommodationSchema = new mongoose.Schema({
   address: String,
 
   amenities: [String],
+  
   rating: {
     type: Number,
     min: 0,

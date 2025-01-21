@@ -5,9 +5,6 @@ const User = require("../models/user");
 const auth = {
     isAuth: async (req, res, next) => {
       const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-      console.log("Authorization Header:", req.headers.authorization);
-      console.log("Cookie Token:", req.cookies.token);
-      console.log("Token Extracted:", token);
   
       if (!token) {
         return res.status(401).json({ message: "Unauthorized: No token provided" });
@@ -15,7 +12,6 @@ const auth = {
   
       try {
         const decodedToken = jwt.verify(token, JWT_SECRET);
-        console.log("Decoded Token:", decodedToken);
         req.userId = decodedToken.id || decodedToken.userId;
         next();
       } catch (error) {

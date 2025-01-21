@@ -35,22 +35,12 @@ const userController = {
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
-
+  
       const user = await User.findOne({ email });
-
-      if (!user) {
+      if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
-
-      const isPasswordCorrect = await bcrypt.compare(
-        password,
-        user.password
-      );
-
-      if (!isPasswordCorrect) {
-        return res.status(400).json({ message: "Invalid credentials" });
-      }
-
+  
       const token = jwt.sign(
         {
           id: user._id,
@@ -59,30 +49,34 @@ const userController = {
         JWT_SECRET,
         { expiresIn: "24h" }
       );
-
+  
+      const isProduction = process.env.NODE_ENV === "production";
+  
       res.cookie("token", token, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
         expires: new Date(Date.now() + 24 * 3600 * 1000),
       });
-
-      res.status(200).json({ message: "Logged successfully!", token });
+  
+      res.status(200).json({ message: "Logged in successfully!", token });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      console.error("Login error:", err);
+      res.status(500).json({ message: "Internal server error" });
     }
-  },
+  },  
 
   me: async (req, res) => {
     try {
       const user = await User.findById(req.userId).select("-password");
       if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: "User not found or unauthorized" });
       }
-      res.json({ user });
+  
+      res.status(200).json({ user });
     } catch (error) {
       console.error("Error in /me route:", error);
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "Internal server error" });
     }
   },
 

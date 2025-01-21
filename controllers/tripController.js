@@ -776,33 +776,46 @@ const tripController = {
 
   getTrainsBtnStations: async (req, res) => {
     try {
-      const from = req.params.from;
-      const to = req.params.to;
+      const { from, to } = req.params;
 
-      const response = await axios.get(
-        `http://indianrailapi.com/api/v2/TrainBetweenStation/apikey/9abdae9ebdd7b42aaa48c30815a4dbcb/From/${from}/To/${to}`
-      );
+      if (!from || !to) {
+        return res.status(400).json({ message: "Source and destination are required." });
+      }
 
-      res.status(200).json(response.data);
+      // Query the database for trains matching the source and destination
+      const trains = await Train.find({ source: from, destination: to });
+
+      if (trains.length === 0) {
+        return res.status(404).json({ message: "No trains found for the specified route." });
+      }
+
+      res.status(200).json(trains);
     } catch (err) {
-      res.status(500).json(err.message);
+      console.error("Error fetching trains:", err.message);
+      res.status(500).json({ message: "Failed to fetch train data." });
     }
   },
 
   getFlightBtnStations: async (req, res) => {
     try {
-      const from = req.params.from;
-      const to = req.params.to;
+      const { from, to } = req.params;
 
-      const response = await axios.get(
-        `https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsedates/1.0/INR/en-GB/${from}/${to}/2023-06-01`,
-      )
+      if (!from || !to) {
+        return res.status(400).json({ message: "Source and destination are required." });
+      }
       
-      res.status(200).json(response.data);
+      const flights = await Flight.find({ source: from, destination: to });
+
+      if (flights.length === 0) {
+        return res.status(404).json({ message: "No flights found for the specified route." });
+      }
+
+      res.status(200).json(flights);
     } catch (err) {
-      res.status(500).json(err.message);
+      console.error("Error fetching flights:", err.message);
+      res.status(500).json({ message: "Failed to fetch flight data." });
     }
-  },
+  }
 };
 
 module.exports = tripController;

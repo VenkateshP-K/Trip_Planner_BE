@@ -3,23 +3,26 @@ const { JWT_SECRET } = require("../utils/config");
 const User = require("../models/user");
 
 const auth = {
-  isAuth: async (req, res, next) => {
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-    console.log("Received token:", token);
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    try {
-      const decodedToken = jwt.verify(token, JWT_SECRET);
-      console.log("Decoded Token:", decodedToken); // Debugging
-      req.userId = decodedToken.id || decodedToken.userId; // Ensure consistency
-      next();
-    } catch (error) {
-      console.error("Token verification error:", error);
-      return res.status(401).json({ message: "Invalid or expired token" });
-    }
-  },
+    isAuth: async (req, res, next) => {
+      const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+      console.log("Authorization Header:", req.headers.authorization);
+      console.log("Cookie Token:", req.cookies.token);
+      console.log("Token Extracted:", token);
+  
+      if (!token) {
+        return res.status(401).json({ message: "Unauthorized: No token provided" });
+      }
+  
+      try {
+        const decodedToken = jwt.verify(token, JWT_SECRET);
+        console.log("Decoded Token:", decodedToken);
+        req.userId = decodedToken.id || decodedToken.userId;
+        next();
+      } catch (error) {
+        console.error("Token verification error:", error.message);
+        return res.status(401).json({ message: "Invalid or expired token" });
+      }
+    },  
 
   isAuthAdmin: async (req, res, next) => {
     try {

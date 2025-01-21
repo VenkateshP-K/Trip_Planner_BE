@@ -125,6 +125,12 @@ tripRouter.get(
 );
 
 tripRouter.get(
+  "/trips/flights/from/:from/to/:to",
+  auth.isAuth,
+  tripController.getFlightBtnStations
+)
+
+tripRouter.get(
   "/trips/flights/search",
   auth.isAuth,
   tripController.suggestFlights

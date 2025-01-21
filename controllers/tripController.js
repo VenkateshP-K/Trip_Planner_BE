@@ -782,8 +782,13 @@ const tripController = {
         return res.status(400).json({ message: "Source and destination are required." });
       }
 
-      // Query the database for trains matching the source and destination
-      const trains = await Train.find({ source: from, destination: to });
+      const fromRegex = new RegExp(from, "i"); 
+      const toRegex = new RegExp(to, "i");
+
+      const trains = await Train.find({
+        source: { $regex: fromRegex },
+        destination: { $regex: toRegex },
+      });
 
       if (trains.length === 0) {
         return res.status(404).json({ message: "No trains found for the specified route." });
@@ -803,8 +808,14 @@ const tripController = {
       if (!from || !to) {
         return res.status(400).json({ message: "Source and destination are required." });
       }
-      
-      const flights = await Flight.find({ source: from, destination: to });
+
+      const fromRegex = new RegExp(from, "i");
+      const toRegex = new RegExp(to, "i");
+
+      const flights = await Flight.find({
+        source: { $regex: fromRegex },
+        destination: { $regex: toRegex },
+      });
 
       if (flights.length === 0) {
         return res.status(404).json({ message: "No flights found for the specified route." });

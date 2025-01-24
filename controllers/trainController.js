@@ -1193,28 +1193,32 @@ const trainController = {
 
   addManyTrains: async (req, res) => {
     try {
-      const userId = req.userId;
-      const admin = req.userType;
-
-      const user = await User.findOne({ _id: userId, userType: admin });
-
-      if (!user) {
-        return res.status(400).json({ message: "Unauthorized" });
+      const userId = req.userId; // Retrieved from the `isAuth` middleware
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized: User ID missing" });
       }
 
-      const trainData = generateTrainData(1000);
-
-      const trains = await Train.insertMany(trainData);
-
-      if (!trains) {
-        return res.status(400).json({ message: "Train data not added" });
+      // Fetch user and verify if they are an admin
+      const user = await User.findById(userId);
+      if (!user || user.userType !== "admin") {
+        return res.status(403).json({ message: "Forbidden: Admin access required" });
       }
 
-      res.status(201).json("Train data added successfully");
-    } catch (err) {
-      res.status(500).json({ message: err.message });
+      // Generate and insert flight data
+      const trainsData = generateTrainData(1000);
+      const train = await Train.insertMany(trainsData);
+
+      if (!train || train.length === 0) {
+        return res.status(500).json({ message: "Train data not added" });
+      }
+
+      res.status(201).json({ message: "trains data added successfully" });
+    } catch (error) {
+      console.error("Error adding trains:", error.message);
+      res.status(500).json({ message: "Internal server error", error: error.message });
     }
   },
+
 };
 
 module.exports = trainController;

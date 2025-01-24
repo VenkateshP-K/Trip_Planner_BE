@@ -218,25 +218,32 @@ const flightController = {
   },
 
   addManyFlights: async (req, res) => {
-    const userId = req.userId;
-    const admin = req.userType;
+    try {
+      const userId = req.userId; // Retrieved from the `isAuth` middleware
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized: User ID missing" });
+      }
 
-    const user = await User.findOne({ _id: userId, userType: admin });
+      // Fetch user and verify if they are an admin
+      const user = await User.findById(userId);
+      if (!user || user.userType !== "admin") {
+        return res.status(403).json({ message: "Forbidden: Admin access required" });
+      }
 
-    if (!user) {
-      return res.status(400).json({ message: "Unauthorized" });
+      // Generate and insert flight data
+      const flightsData = generateFlightData(1000);
+      const flight = await Flight.insertMany(flightsData);
+
+      if (!flight || flight.length === 0) {
+        return res.status(500).json({ message: "Flight data not added" });
+      }
+
+      res.status(201).json({ message: "Flights data added successfully" });
+    } catch (error) {
+      console.error("Error adding flights:", error.message);
+      res.status(500).json({ message: "Internal server error", error: error.message });
     }
-
-    const flightsData = generateFlightData(1000);
-
-    const flight = await Flight.insertMany(flightsData);
-
-    if (!flight) {
-      return res.status(400).json({ message: "Flight data not added" });
-    }
-
-    res.status(201).json("Flights data added successfully");
-  },
+  }
 };
 
 module.exports = flightController;

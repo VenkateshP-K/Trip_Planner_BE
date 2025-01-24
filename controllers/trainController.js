@@ -1106,7 +1106,7 @@ const generateTrainData = (numEntries) => {
 
   startDate = Date.now();
 
-  endDate = new Date("2024-12-31");
+  endDate = new Date("2025-02-28");
 
   for (i = 0; i <= numEntries; i++) {
     source =

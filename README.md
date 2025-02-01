@@ -21,3 +21,6 @@
 ## usage
 
 1. run `npm run dev` to start the server
+
+## deployment
+- Render

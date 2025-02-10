@@ -35,32 +35,36 @@ const userController = {
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
+  
       const user = await User.findOne({ email });
-  
-      if (!user) {
-        return res.status(400).json({ message: "User not found" });
-      }
-  
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
+      if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
   
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      });
+      const token = jwt.sign(
+        {
+          id: user._id,
+          userType: user.userType,
+        },
+        JWT_SECRET,
+        { expiresIn: "24h" }
+      );
+  
+      const isProduction = process.env.NODE_ENV === "production";
   
       res.cookie("token", token, {
         httpOnly: true,
-        secure: true, // Make sure HTTPS is used
-        sameSite: "None",
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        expires: new Date(Date.now() + 24 * 3600 * 1000),
       });
   
-      res.status(200).json({ message: "Login successful" });
+      res.status(200).json({ message: "Logged in successfully!", token });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      console.error("Login error:", err);
+      res.status(500).json({ message: "Internal server error" });
     }
-  },
+  },  
 
   me: async (req, res) => {
     try {
@@ -87,7 +91,7 @@ const userController = {
         secure: true,
         sameSite: "none",
       });
-      res.status(204).json({message : "User Logged Out Successfully!"});
+      res.status(204).send({message : "User Logged Out Successfully"});
     } catch (err) {
       res.status(500).json({ message: err.message });
     }

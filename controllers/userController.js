@@ -82,6 +82,10 @@ const userController = {
 
   logout: async (req, res) => {
     try {
+      if (!req.cookies.token) {
+        return res.status(401).json({ message: "No token found" });
+      }
+  
       res.clearCookie("token", {
         httpOnly: true,
         secure: true,

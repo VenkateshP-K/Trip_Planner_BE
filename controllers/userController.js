@@ -82,18 +82,13 @@ const userController = {
 
   logout: async (req, res) => {
     try {
-      if (!req.cookies.token) {
-        return res.status(401).json({ message: "No token found" });
-      }
-  
-      res.clearCookie("token", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-      });
-      res.status(204).send({message : "User Logged Out Successfully"});
-    } catch (err) {
-      res.status(500).json({ message: err.message });
+
+      res.status(200).json({ message: "Logged out successfully!" });
+
+      //clear Token
+      res.clearCookie("token");
+    } catch (error) {
+      console.error("Error :", error);
     }
   },
 

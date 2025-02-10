@@ -11,7 +11,6 @@ const auth = {
       }
   
       try {
-        const decodedToken = jwt.verify(token, JWT_SECRET);
         req.userId = decodedToken.id || decodedToken.userId;
         next();
       } catch (error) {

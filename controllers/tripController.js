@@ -80,10 +80,6 @@ const tripController = {
 
       const allTrips = await Trip.find({ userId });
 
-      if (allTrips.length === 0) {
-        return res.status(400).json({ message: "No trips found" });
-      }
-
       res.status(200).json(allTrips);
     } catch (err) {
       res.status(500).json({ message: err.message });
